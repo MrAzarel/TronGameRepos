@@ -12,14 +12,13 @@ namespace Tron
     {
         public static async void Host(IPEndPoint IPEnd)
         {
-            using (Socket server_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+            using (Socket server_socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
             {
                 try
                 {
                     server_socket.Bind(IPEnd);
                     Console.WriteLine(server_socket.LocalEndPoint);
-                    server_socket.Listen(1000);
-                    await server_socket.AcceptAsync();
+                    await server_socket.ReceiveAsync();
                     Console.WriteLine("Client connected");
                 }
                 catch (Exception ex) { 
