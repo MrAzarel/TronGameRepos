@@ -14,17 +14,44 @@ namespace Tron
 
         public static async void Connect(IPEndPoint IPEnd)
         {
-            using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
+                UdpClient udpClient = new UdpClient(IPEnd);
+
+                // Создаем IPEndPoint для хранения информации о клиентах
+                IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
+
                 try
                 {
-                    await socket.ConnectAsync(IPEnd);
-                    Console.WriteLine($"Подключение к {IPEnd} установлено");
+                    Console.WriteLine("Сервер запущен. Ожидание подключений...");
+
+                    while (true)
+                    {
+                        byte[] data = new byte[1024];
+                        string msg = Console.ReadLine();
+                        data = Encoding.UTF8.GetBytes(msg);
+                        udpClient.Connect(IPEnd);
+                        udpClient.Send(data, 1024);
+
+                        // Преобразуем полученные данные в строку
+                        string message = Encoding.UTF8.GetString(data);
+
+                        // Выводим сообщение от клиента
+                        Console.WriteLine("Получено сообщение от клиента: " + message);
+
+                        // Отправляем ответ клиенту
+                        string response = "Сообщение получено на сервере";
+                        byte[] responseData = Encoding.UTF8.GetBytes(response);
+                        udpClient.Send(responseData, responseData.Length, IPEnd);
+                    }
                 }
-                catch (SocketException ex)
+                catch (Exception e)
                 {
-                    Console.WriteLine(ex.ToString());
-                    throw ex;
+                    Console.WriteLine("Ошибка: " + e.Message);
+                }
+                finally
+                {
+                    // Закрываем UDP сокет
+                    udpClient.Close();
                 }
             }
         }
