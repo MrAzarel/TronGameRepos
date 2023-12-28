@@ -14,47 +14,36 @@ namespace Tron
 
         public static async void Connect(IPEndPoint IPEnd)
         {
+            // Создаем UDP клиент
+            UdpClient udpClient = new UdpClient();
+
+            try
             {
-                UdpClient udpClient = new UdpClient(IPEnd);
-
-                // Создаем IPEndPoint для хранения информации о клиентах
-                IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
-
-                try
+                while (true)
                 {
-                    Console.WriteLine("Сервер запущен. Ожидание подключений...");
+                    Console.Write("Введите сообщение для сервера: ");
+                    string message = Console.ReadLine();
 
-                    while (true)
-                    {
-                        byte[] data = new byte[1024];
-                        string msg = Console.ReadLine();
-                        data = Encoding.UTF8.GetBytes(msg);
-                        udpClient.Connect(IPEnd);
-                        udpClient.Send(data, 1024);
+                    byte[] data = Encoding.UTF8.GetBytes(message);
 
-                        // Преобразуем полученные данные в строку
-                        string message = Encoding.UTF8.GetString(data);
+                    udpClient.Send(data, data.Length, IPEnd);
 
-                        // Выводим сообщение от клиента
-                        Console.WriteLine("Получено сообщение от клиента: " + message);
+                    IPEndPoint remoteEP = null;
+                    byte[] responseData = udpClient.Receive(ref remoteEP);
 
-                        // Отправляем ответ клиенту
-                        string response = "Сообщение получено на сервере";
-                        byte[] responseData = Encoding.UTF8.GetBytes(response);
-                        udpClient.Send(responseData, responseData.Length, IPEnd);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Ошибка: " + e.Message);
-                }
-                finally
-                {
-                    // Закрываем UDP сокет
-                    udpClient.Close();
+                    string response = Encoding.UTF8.GetString(responseData);
+                    Console.WriteLine("Получен ответ от сервера: " + response);
                 }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine("Ошибка: " + e.Message);
+            }
+            finally
+            {
+                // Закрываем UDP клиент
+                udpClient.Close();
+            }
         }
-
     }
 }
