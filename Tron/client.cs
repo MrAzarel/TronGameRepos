@@ -12,38 +12,47 @@ namespace Tron
     internal class client
     {
 
-        public static async void Connect(IPEndPoint IPEnd)
+        public static async void Connect(IPEndPoint IPEnd, string exchangeData)
         {
-            // Создаем UDP клиент
             UdpClient udpClient = new UdpClient();
+            client clientUDP = new client();
 
             try
             {
-                while (true)
-                {
-                    Console.Write("Введите сообщение для сервера: ");
-                    string message = Console.ReadLine();
+                await clientUDP.ClientSend(udpClient, exchangeData, IPEnd);
 
-                    byte[] data = Encoding.UTF8.GetBytes(message);
+                IPEndPoint remoteEP = null;
 
-                    udpClient.Send(data, data.Length, IPEnd);
-
-                    IPEndPoint remoteEP = null;
-                    byte[] responseData = udpClient.Receive(ref remoteEP);
-
-                    string response = Encoding.UTF8.GetString(responseData);
-                    Console.WriteLine("Получен ответ от сервера: " + response);
-                }
+                await clientUDP.ClientReceive(udpClient, IPEnd, remoteEP);
             }
             catch (Exception e)
             {
                 Console.WriteLine("Ошибка: " + e.Message);
             }
-            finally
-            {
-                // Закрываем UDP клиент
-                udpClient.Close();
-            }
         }
+
+        void CloseCLient(UdpClient udpClient)
+        {
+            udpClient.Close();
+        }
+        
+        public async         
+        Task
+        ClientSend(UdpClient udpClient, string exchangeData, IPEndPoint IPEnd)
+        {
+                byte[] data = Encoding.UTF8.GetBytes(exchangeData);
+                udpClient.Send(data, data.Length, IPEnd);
+        }
+
+        public async
+        Task
+        ClientReceive(UdpClient udpClient, IPEndPoint IPEnd, IPEndPoint remoteEP)
+        {
+            byte[] responseData = udpClient.Receive(ref remoteEP);
+
+            string response = Encoding.UTF8.GetString(responseData);
+            Console.WriteLine("Получен ответ от сервера: " + response);
+        }
+
     }
 }
