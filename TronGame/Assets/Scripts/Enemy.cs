@@ -2,24 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
-    public KeyCode upKey;
-    public KeyCode downKey;
-    public KeyCode rightKey;
-    public KeyCode leftKey;
+    string allData;
+    string direction;
 
     public float speed = 16.0f;
-
     public GameObject wallPrefab;
-
     Vector2 lastWallEnd;
-
     Collider2D wall;
-
     public static bool isDead;
-
-    string lastPressedButton = "w";
 
     // Start is called before the first frame update
     void Start()
@@ -32,38 +24,40 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        allData = User.getData();
+        getDirection();
+
         move();
 
         fitColliderBetween(wall, lastWallEnd, transform.position);
+    }
 
-        User.dataToSend = collectMessage();
+    void getDirection()
+    {
+        direction = allData.Split(' ')[0];
     }
 
     void move()
     {
-        if (Input.GetKeyDown(upKey))
+        if (direction == "w")
         {
             GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
             spawnWall();
-            lastPressedButton = "w";
         }
-        else if (Input.GetKeyDown(downKey))
+        else if (direction == "s")
         {
             GetComponent<Rigidbody2D>().velocity = -Vector2.up * speed;
             spawnWall();
-            lastPressedButton = "s";
         }
-        else if (Input.GetKeyDown(rightKey))
+        else if (direction == "d")
         {
             GetComponent<Rigidbody2D>().velocity = Vector2.right * speed;
             spawnWall();
-            lastPressedButton = "d";
         }
-        else if (Input.GetKeyDown(leftKey))
+        else if (direction == "a")
         {
             GetComponent<Rigidbody2D>().velocity = -Vector2.right * speed;
             spawnWall();
-            lastPressedButton = "a";
         }
     }
 
@@ -100,10 +94,5 @@ public class Player : MonoBehaviour
         Destroy(gameObject);
         Time.timeScale = 0.001f;
         Restart.currentName = name;
-    }
-
-    string collectMessage()
-    {
-        return lastPressedButton + " " + transform.position;
     }
 }
