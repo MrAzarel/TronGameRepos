@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Menu : MonoBehaviour
+public class MainMenu : MonoBehaviour
 {
     public GameObject menuButtons;
     public GameObject enter;
@@ -16,6 +17,14 @@ public class Menu : MonoBehaviour
     {
         menuButtons.SetActive(true);
         enter.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (User.isConnected)
+        {
+            SceneManager.LoadScene("SampleScene");
+        }
     }
 
     public void EscapeBtn()
@@ -37,7 +46,7 @@ public class Menu : MonoBehaviour
 
     public void ConnectBtn()
     {
-        ipString = ip.ToString();
+        ipString = ip.text.ToString();
         user.Connect(ipString);
     }
 }

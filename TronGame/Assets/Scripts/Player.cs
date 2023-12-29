@@ -104,6 +104,6 @@ public class Player : MonoBehaviour
 
     string collectMessage()
     {
-        return lastPressedButton + " " + transform.position;
+        return lastPressedButton + " " + transform.position + " true";
     }
 }

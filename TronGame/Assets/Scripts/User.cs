@@ -14,11 +14,12 @@ using Unity.VisualScripting;
 public class User : MonoBehaviour
 {
     static Socket client;
-    EndPoint IPend;
+    static EndPoint IPend;
     static byte[] data = new byte[1024];
     string getedData;
     public static string dataToSend;
-    bool isGameStarted = false;
+    public static bool isGameStarted = false;
+    public static bool isConnected = false;
 
     private void Update()
     {
@@ -30,12 +31,17 @@ public class User : MonoBehaviour
 
     public void Connect(string ip)
     {
-        IPend = new IPEndPoint(IPAddress.Parse(ip), 11000);
-        client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Udp);
+        IPend = new IPEndPoint(IPAddress.Parse(ip), 556);
+        client = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         client.Connect(IPend);
-        Console.WriteLine($"Подключено к: {client.RemoteEndPoint}");
+
+        byte[] message = Encoding.UTF8.GetBytes("Client");
+        client.SendTo(message, IPend);
+
+        isConnected = true;
 
         Thread thread = new Thread(startGame);
+        thread.Start();
     }
 
     void startGame()
@@ -69,6 +75,12 @@ public class User : MonoBehaviour
     void sendData()
     {
         byte[] message = Encoding.UTF8.GetBytes(dataToSend);
+        client.SendTo(message, IPend);
+    }
+
+    public static void sendMessage(string messageToSend)
+    {
+        byte[] message = Encoding.UTF8.GetBytes(messageToSend);
         client.SendTo(message, IPend);
     }
 }
