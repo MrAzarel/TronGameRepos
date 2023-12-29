@@ -1,5 +1,6 @@
 ﻿    using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -10,32 +11,44 @@ namespace Tron
 {
     internal class Server
     {
-        public static async void Host(IPEndPoint IPEnd)
+        public static void Host(IPEndPoint IPEnd)
         {
             UdpClient udpServer = new UdpClient(IPEnd);
-
-            // Создаем IPEndPoint для хранения информации о клиентах
             IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
+            Server serverUDP = new Server();
+            Console.WriteLine("Сервер запущен. Ожидание подключений...");
 
             try
             {
-                Console.WriteLine("Сервер запущен. Ожидание подключений...");
-
                 while (true)
                 {
-                    // Получаем данные от клиента
                     byte[] data = udpServer.Receive(ref remoteEP);
-
-                    // Преобразуем полученные данные в строку
                     string message = Encoding.UTF8.GetString(data);
 
-                    // Выводим сообщение от клиента
-                    Console.WriteLine("Получено сообщение от клиента: " + message);
+                    string[] msgData = message.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    bool RightData = serverUDP.CheckMessage(msgData);
 
-                    // Отправляем ответ клиенту
-                    string response = "Сообщение получено на сервере";
-                    byte[] responseData = Encoding.UTF8.GetBytes(response);
-                    udpServer.Send(responseData, responseData.Length, remoteEP);
+                    if (msgData[0] == "close")
+                    {
+                        Console.WriteLine("Закрываем подключение");
+                        serverUDP.CloseServer(udpServer);
+                        return;
+                    }
+
+                    if (RightData)
+                    {
+                        Console.WriteLine("Получено правильное сообщение от клиента: " + message);
+                        string response = $"Правильное сообщение получено на сервере: {message} от клиента: {remoteEP}";
+                        byte[] responseData = Encoding.UTF8.GetBytes(response);
+                        udpServer.Send(responseData, responseData.Length, remoteEP);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Неверные данные");
+                        string response = $"Вы несете какую то чушь {remoteEP}";
+                        byte[] responseData = Encoding.UTF8.GetBytes(response);
+                        udpServer.Send(responseData, responseData.Length, remoteEP);
+                    }
                 }
             }
             catch (Exception e)
@@ -44,11 +57,59 @@ namespace Tron
             }
             finally
             {
-                // Закрываем UDP сокет
                 udpServer.Close();
             }
         }
+
+        void CloseServer(UdpClient udpServer)
+        {
+            udpServer.Close();
+        }
+
+        bool CheckMessage(string[] msg) 
+        {
+            bool HasDirection, HasCoordinates, HasLife = false;
+            int x, y = 0;
+
+            if (msg.Length >= 4)
+            {
+                if (msg[0] == "w" || msg[0] == "a" || msg[0] == "s" || msg[0] == "d")
+                {
+                    HasDirection = true;
+                }
+                else
+                {
+                    HasDirection = false;
+                }
+                if (int.TryParse(msg[1], out x) && int.TryParse(msg[2], out y))
+                {
+                    HasCoordinates = true;
+                }
+                else
+                {
+                    HasCoordinates = false;
+                }
+                if (msg[3] == "true" || msg[3] == "false")
+                {
+                    HasLife = true;
+                }
+                if (HasDirection && HasCoordinates && HasLife)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
+
+    
 
 
 }

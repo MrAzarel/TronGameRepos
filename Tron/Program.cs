@@ -13,8 +13,14 @@ namespace Tron
     {
         static void Main(string[] args)
         {
-            IPEndPoint IPend = new IPEndPoint(IPAddress.Parse("192.168.0.140"), 555);
-            client.Connect(IPend);
+            IPEndPoint IPend = new IPEndPoint(IPAddress.Parse("10.0.1.29"), 556);
+            Server.Host(IPend);
+
+            //while (true)
+            //{
+            //    string message = Console.ReadLine(); 
+            //    client.Connect(IPend, message);
+            //}
         }
     }
 }
