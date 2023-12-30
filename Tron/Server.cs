@@ -16,6 +16,7 @@ namespace Tron
         static Socket ServerUDP;
         public static EndPoint client1Endpoint;
         public static EndPoint client2Endpoint;
+        public int how_many_ready;
         public static void Host(IPEndPoint IPEnd)
         {
             Server serverMethods = new Server();
@@ -90,9 +91,11 @@ namespace Tron
             {
                 while (true)
                 {
-                    Console.WriteLine($"Waiting for client on {remoteEP}...");
+
+                    Console.WriteLine($"Client on {remoteEP}...");
                     byte[] buffer = new byte[256];
                     int receivedbytes = ServerUDP.ReceiveFrom(buffer, ref remoteEP);
+                    Server UDPserver = new Server();
 
                     string message = Encoding.UTF8.GetString(buffer, 0, receivedbytes);
 
@@ -100,6 +103,7 @@ namespace Tron
 
                     if (msgData[0] == "connected")
                     {
+                        Console.WriteLine("Received connected");
                         byte[] responseData = Encoding.UTF8.GetBytes(client);
                         ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, remoteEP);
                         if(client == "left")
@@ -111,43 +115,48 @@ namespace Tron
                             client2Endpoint = remoteEP;
                         }
                     }
-
                     else
                     {
                         if (msgData[0] == "ready")
                         {
-                            Console.WriteLine(client1Endpoint);
-                            Console.WriteLine(client2Endpoint);
-
+                            Console.WriteLine("Received ready");
+                            
                             if (remoteEP.Equals(client1Endpoint))
                             {
-                                Console.WriteLine("client is ready");
-                                byte[] responseData = Encoding.UTF8.GetBytes("Client is ready");
+                                Console.WriteLine($"{client1Endpoint} - client is ready");
+                                byte[] responseData = Encoding.UTF8.GetBytes("start");
                                 ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client2Endpoint);
-                                responseData = Encoding.UTF8.GetBytes("Sent Your data to enemy");
                                 ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client1Endpoint);
                             }
                             else
                             {
-                                Console.WriteLine("client is ready");
-                                byte[] responseData = Encoding.UTF8.GetBytes("Client is ready");
-                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client1Endpoint);
-                                responseData = Encoding.UTF8.GetBytes("Sent Your data to enemy");
+                                Console.WriteLine($"{client2Endpoint} - client is ready");
+                                byte[] responseData = Encoding.UTF8.GetBytes("start");
                                 ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client2Endpoint);
+                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client1Endpoint);
                             }
                         }
 
                         else
                         {
-
                             bool RightData = serverMethods.CheckMessage(msgData);
 
                             if (RightData)
                             {
                                 Console.WriteLine("Получено правильное сообщение от клиента: " + message);
-                                string response = $"Правильное сообщение получено на сервере: {message} от клиента: {remoteEP}";
-                                byte[] responseData = Encoding.UTF8.GetBytes(response);
-                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, remoteEP);
+                                string response = message;
+                                if (remoteEP.Equals(client1Endpoint))
+                                {
+                                    Console.WriteLine("tick");
+                                    byte[] responseData = Encoding.UTF8.GetBytes(response);
+                                    ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client2Endpoint);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("tick");
+                                    byte[] responseData = Encoding.UTF8.GetBytes(response);
+                                    ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client1Endpoint);
+                                }
                             }
                             else
                             {
