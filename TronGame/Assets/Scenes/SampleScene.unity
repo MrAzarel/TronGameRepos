@@ -630,7 +630,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -300, y: 206}
+  m_AnchoredPosition: {x: -300, y: 200}
   m_SizeDelta: {x: 50.464, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &556952820
@@ -897,7 +897,7 @@ GameObject:
   - component: {fileID: 683988424}
   - component: {fileID: 683988423}
   m_Layer: 5
-  m_Name: ReadyT
+  m_Name: EnemyReadyT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1080,7 +1080,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 300, y: 206}
+  m_AnchoredPosition: {x: 300, y: 200}
   m_SizeDelta: {x: 77.5098, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &917462618
@@ -1316,32 +1316,14 @@ GameObject:
   - component: {fileID: 1304604968}
   - component: {fileID: 1304604967}
   - component: {fileID: 1304604966}
-  - component: {fileID: 1304604965}
+  - component: {fileID: 1304604970}
   m_Layer: 0
-  m_Name: player2
+  m_Name: enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1304604965
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1304604964}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b55dee6b038adce42814d96cf2283193, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  upKey: 273
-  downKey: 274
-  rightKey: 275
-  leftKey: 276
-  speed: 16
-  wallPrefab: {fileID: 5870262007234721777, guid: 5c38d728c9dfb3141962a066c54d55b5, type: 3}
 --- !u!50 &1304604966
 Rigidbody2D:
   serializedVersion: 4
@@ -1456,6 +1438,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1304604970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304604964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5ba08ef813facc4eab20768c28abc9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 16
+  wallPrefab: {fileID: 5870262007234721777, guid: 5c38d728c9dfb3141962a066c54d55b5, type: 3}
 --- !u!1001 &1328074690
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1877,7 +1873,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyBackground: {fileID: 18944175}
   ready: {fileID: 420415658}
-  button: {fileID: 641659025}
+  readyButton: {fileID: 641659025}
+  youText: {fileID: 556952818}
+  enemyText: {fileID: 917462616}
+  enemyReady: {fileID: 683988421}
+  player: {fileID: 1330747345}
+  enemy: {fileID: 1304604964}
 --- !u!1 &1736771799
 GameObject:
   m_ObjectHideFlags: 0

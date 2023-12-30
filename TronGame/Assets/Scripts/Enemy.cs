@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    string allData;
+    public static string allData;
     string direction;
 
     public float speed = 16.0f;
@@ -24,7 +24,6 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        allData = User.getData();
         getDirection();
 
         move();
