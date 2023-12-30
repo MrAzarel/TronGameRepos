@@ -15,15 +15,17 @@ public class User : MonoBehaviour
 {
     static Socket client;
     static EndPoint IPend;
-    static byte[] data = new byte[1024];
+    static byte[] data = new byte[256];
     string getedData;
-    public static string dataToSend;
-    public static bool isGameStarted = false;
-    public static bool isConnected = false;
+    public static bool isEnemyReady = false;
 
+    bool isStartOver = false;
     private void Update()
     {
-        if (isGameStarted)
+
+        dataProcessing();
+
+        if (WatingMenu.isGameStarted)
         {
             sendData();
         }
@@ -36,9 +38,9 @@ public class User : MonoBehaviour
         client.Connect(IPend);
 
         byte[] message = Encoding.UTF8.GetBytes("connected");
-        client.SendTo(message, IPend);
+        client.SendTo(message, message.Length, SocketFlags.None, IPend);
 
-        isConnected = true;
+        MainMenu.isConnected = true;
 
         Thread thread = new Thread(startSide);
         thread.Start();
@@ -52,12 +54,13 @@ public class User : MonoBehaviour
             if (start != "" && (start.Split(' ')[0] == "left" || start.Split(' ')[0] == "right"))
             {
                 WatingMenu.startSide = start;
+                isStartOver = true;
                 break;
             }
             else
             {
-                int res = client.Receive(data, 0, 1000, 0);
-                start = Encoding.UTF8.GetString(data);
+                int res = client.ReceiveFrom(data, ref IPend);
+                start = Encoding.UTF8.GetString(data, 0, res);
             }
         }
     }
@@ -65,21 +68,21 @@ public class User : MonoBehaviour
     string getData()
     {
         string message;
-        int res = client.Receive(data, 0, 1000, 0);
-        message = Encoding.UTF8.GetString(data);
+        int res = client.ReceiveFrom(data, ref IPend);
+        message = Encoding.UTF8.GetString(data, 0, res);
         return message;
     }
 
     void sendData()
     {
-        byte[] message = Encoding.UTF8.GetBytes(dataToSend);
-        client.SendTo(message, IPend);
+        byte[] message = Encoding.UTF8.GetBytes(WatingMenu.dataToSend);
+        client.SendTo(message, message.Length, SocketFlags.None, IPend);
     }
 
     public static void sendMessage(string messageToSend)
     {
         byte[] message = Encoding.UTF8.GetBytes(messageToSend);
-        client.SendTo(message, IPend);
+        client.SendTo(message, message.Length, SocketFlags.None, IPend);
     }
 
     void dataProcessing()
@@ -87,13 +90,12 @@ public class User : MonoBehaviour
         getedData = getData();
         if (getedData.Split(' ')[0] == "ready")
         {
-            WatingMenu.isEnemyReady = true;
+            isEnemyReady = true;
+            WatingMenu.readyCount++;
         }
         else if (getedData.Split(' ')[0] == "start")
         {
-            byte[] message = Encoding.UTF8.GetBytes("GameStarted");
-            client.SendTo(message, IPend);
-            isGameStarted = true;
+            WatingMenu.isGameStarted = true;
         }
         else if (getedData.Split(' ')[0] == "w" || getedData.Split(' ')[0] == "s" || getedData.Split(' ')[0] == "d" || getedData.Split(' ')[0] == "a")
         {

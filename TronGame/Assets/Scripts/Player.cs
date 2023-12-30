@@ -30,13 +30,16 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        gameStart();
+        if (WatingMenu.isGameStarted)
+        {
+            gameStart();
 
-        move();
+            move();
 
-        fitColliderBetween(wall, lastWallEnd, transform.position);
+            fitColliderBetween(wall, lastWallEnd, transform.position);
 
-        User.dataToSend = collectMessage();
+            WatingMenu.dataToSend = collectMessage();
+        }
     }
 
     void move()
