@@ -4,68 +4,35 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Tron
 {
     internal class Server
     {
+        static Socket ServerUDP;
+        public static EndPoint client1Endpoint;
+        public static EndPoint client2Endpoint;
         public static void Host(IPEndPoint IPEnd)
         {
-            UdpClient udpServer = new UdpClient(IPEnd);
-            IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
-            Server serverUDP = new Server();
+            Server serverMethods = new Server();
+            ServerUDP = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            ServerUDP.Bind(IPEnd);
+
+            client1Endpoint = new IPEndPoint(IPAddress.Any, 0);
+            client2Endpoint = new IPEndPoint(IPAddress.Any, 0);
+
             Console.WriteLine("Сервер запущен. Ожидание подключений...");
 
-            try
-            {
-                while (true)
-                {
-                    byte[] data = udpServer.Receive(ref remoteEP);
-                    string message = Encoding.UTF8.GetString(data);
+            Thread client1Thread = new Thread(()=> ListenForClient(client1Endpoint, serverMethods, "left"));
+            Thread client2Thread = new Thread(() => ListenForClient(client2Endpoint, serverMethods, "right"));
 
-                    string[] msgData = message.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (msgData[0] == "ready")
-                    {
+            client1Thread.Start();
+            client2Thread.Start();
 
-                    }
-                    else
-                    {
-                        bool RightData = serverUDP.CheckMessage(msgData);
-
-                        if (msgData[0] == "close")
-                        {
-                            Console.WriteLine("Закрываем подключение");
-                            serverUDP.CloseServer(udpServer);
-                            return;
-                        }
-
-                        if (RightData)
-                        {
-                            Console.WriteLine("Получено правильное сообщение от клиента: " + message);
-                            string response = $"Правильное сообщение получено на сервере: {message} от клиента: {remoteEP}";
-                            byte[] responseData = Encoding.UTF8.GetBytes(response);
-                            udpServer.Send(responseData, responseData.Length, remoteEP);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Неверные данные");
-                            string response = $"Вы несете какую то чушь {remoteEP}";
-                            byte[] responseData = Encoding.UTF8.GetBytes(response);
-                            udpServer.Send(responseData, responseData.Length, remoteEP);
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Ошибка: " + e.Message);
-            }
-            finally
-            {
-                udpServer.Close();
-            }
         }
 
         void CloseServer(UdpClient udpServer)
@@ -114,7 +81,97 @@ namespace Tron
                 return false;
             }
         }
+
+        static void ListenForClient(object endpointObj , Server serverMethods, string client)
+        {
+            EndPoint remoteEP = (EndPoint)endpointObj;
+
+            try
+            {
+                while (true)
+                {
+                    Console.WriteLine($"Waiting for client on {remoteEP}...");
+                    byte[] buffer = new byte[256];
+                    int receivedbytes = ServerUDP.ReceiveFrom(buffer, ref remoteEP);
+
+                    string message = Encoding.UTF8.GetString(buffer, 0, receivedbytes);
+
+                    string[] msgData = message.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (msgData[0] == "connected")
+                    {
+                        byte[] responseData = Encoding.UTF8.GetBytes(client);
+                        ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, remoteEP);
+                        if(client == "left")
+                        {
+                            client1Endpoint = remoteEP;
+                        }
+                        else if(client == "right")
+                        {
+                            client2Endpoint = remoteEP;
+                        }
+                    }
+
+                    else
+                    {
+                        if (msgData[0] == "ready")
+                        {
+                            Console.WriteLine(client1Endpoint);
+                            Console.WriteLine(client2Endpoint);
+
+                            if (remoteEP.Equals(client1Endpoint))
+                            {
+                                Console.WriteLine("client is ready");
+                                byte[] responseData = Encoding.UTF8.GetBytes("Client is ready");
+                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client2Endpoint);
+                                responseData = Encoding.UTF8.GetBytes("Sent Your data to enemy");
+                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client1Endpoint);
+                            }
+                            else
+                            {
+                                Console.WriteLine("client is ready");
+                                byte[] responseData = Encoding.UTF8.GetBytes("Client is ready");
+                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client1Endpoint);
+                                responseData = Encoding.UTF8.GetBytes("Sent Your data to enemy");
+                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client2Endpoint);
+                            }
+                        }
+
+                        else
+                        {
+
+                            bool RightData = serverMethods.CheckMessage(msgData);
+
+                            if (RightData)
+                            {
+                                Console.WriteLine("Получено правильное сообщение от клиента: " + message);
+                                string response = $"Правильное сообщение получено на сервере: {message} от клиента: {remoteEP}";
+                                byte[] responseData = Encoding.UTF8.GetBytes(response);
+                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, remoteEP);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Неверные данные");
+                                string response = $"Вы несете какую то чушь {remoteEP}";
+                                byte[] responseData = Encoding.UTF8.GetBytes(response);
+                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, remoteEP);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Ошибка: " + e.Message);
+            }
+            finally
+            {
+               ServerUDP.Close();
+            }
+        }
     }
+
+
 
     
 

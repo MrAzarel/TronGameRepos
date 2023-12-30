@@ -19,29 +19,35 @@ namespace Tron
 
             try
             {
-                await clientUDP.ClientSend(udpClient, exchangeData, IPEnd);
+                while (true)
+                {
+                    Console.WriteLine("Какое сообщение должно быть отправлено?");
+                    exchangeData = Console.ReadLine();
+                    await clientUDP.ClientSend(udpClient, exchangeData, IPEnd);
 
-                IPEndPoint remoteEP = null;
+                    IPEndPoint remoteEP = null;
 
-                await clientUDP.ClientReceive(udpClient, IPEnd, remoteEP);
+                    await clientUDP.ClientReceive(udpClient, IPEnd, remoteEP);
+                }
             }
             catch (Exception e)
             {
                 Console.WriteLine("Ошибка: " + e.Message);
             }
+            finally { udpClient.Close(); }
         }
 
         void CloseCLient(UdpClient udpClient)
         {
             udpClient.Close();
         }
-        
-        public async         
+
+        public async
         Task
         ClientSend(UdpClient udpClient, string exchangeData, IPEndPoint IPEnd)
         {
-                byte[] data = Encoding.UTF8.GetBytes(exchangeData);
-                udpClient.Send(data, data.Length, IPEnd);
+            byte[] data = Encoding.UTF8.GetBytes(exchangeData);
+            udpClient.Send(data, data.Length, IPEnd);
         }
 
         public async
