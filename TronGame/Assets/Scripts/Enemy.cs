@@ -16,19 +16,22 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        gameStart();
+        if (WatingMenu.isGameStarted)
+        {
+            gameStart();
 
-        getDirection();
+            getDirection();
 
-        move();
+            move();
 
-        fitColliderBetween(wall, lastWallEnd, transform.position);
+            fitColliderBetween(wall, lastWallEnd, transform.position);
+        }
     }
 
     void getDirection()

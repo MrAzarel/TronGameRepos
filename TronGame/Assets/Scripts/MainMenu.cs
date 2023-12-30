@@ -12,6 +12,8 @@ public class MainMenu : MonoBehaviour
     public string ipString;
     User user = new User();
 
+    public static bool isConnected = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +23,7 @@ public class MainMenu : MonoBehaviour
 
     private void Update()
     {
-        if (User.isConnected)
+        if (isConnected)
         {
             SceneManager.LoadScene("SampleScene");
         }

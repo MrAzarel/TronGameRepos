@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Threading;
 
 public class WatingMenu : MonoBehaviour
 {
@@ -12,7 +13,6 @@ public class WatingMenu : MonoBehaviour
     public UnityEngine.UI.Image playerBackground;
     public Text ready;
     public Button readyButton;
-    public static bool isEnemyReady = false;
     public static string startSide;
 
     public GameObject youText;
@@ -24,7 +24,10 @@ public class WatingMenu : MonoBehaviour
 
     bool isPlayerReady = false;
 
-    public static bool isGameStarted; 
+    public static bool isGameStarted = false;
+    public static string dataToSend;
+
+    public static int readyCount = 0;
 
     void Start()
     {
@@ -46,11 +49,12 @@ public class WatingMenu : MonoBehaviour
     {
         readyButton.interactable = false;
         ready.text = "Ready";
+        isPlayerReady = true;
         if (startSide == "right")
             enemyBackground.color = new Color(1, 1, 1);
         else
             playerBackground.color = new Color(1, 1, 1);
-        User.sendMessage("redy");
+        User.sendMessage("ready");
     }
 
     void ChooseSide(string side)
@@ -68,19 +72,20 @@ public class WatingMenu : MonoBehaviour
 
     void MakeEnemyReady()
     {
-        if (isEnemyReady) 
+        if (User.isEnemyReady || readyCount >= 1) 
         {
             if (startSide == "right")
                 playerBackground.color = new Color(1, 1, 1);
             else
                 enemyBackground.color = new Color(1, 1, 1);
+            
             enemyReady.GetComponent<Text>().text = "ready";
         }
     }
 
     void StartGame()
     {
-        if (isEnemyReady && isPlayerReady)
+        if ((User.isEnemyReady && isPlayerReady) || readyCount == 1)
         {
             watingMenu.SetActive(false);
             Time.timeScale = 1f;
