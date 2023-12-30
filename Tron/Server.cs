@@ -26,28 +26,35 @@ namespace Tron
                     string message = Encoding.UTF8.GetString(data);
 
                     string[] msgData = message.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    bool RightData = serverUDP.CheckMessage(msgData);
-
-                    if (msgData[0] == "close")
+                    if (msgData[0] == "ready")
                     {
-                        Console.WriteLine("Закрываем подключение");
-                        serverUDP.CloseServer(udpServer);
-                        return;
-                    }
 
-                    if (RightData)
-                    {
-                        Console.WriteLine("Получено правильное сообщение от клиента: " + message);
-                        string response = $"Правильное сообщение получено на сервере: {message} от клиента: {remoteEP}";
-                        byte[] responseData = Encoding.UTF8.GetBytes(response);
-                        udpServer.Send(responseData, responseData.Length, remoteEP);
                     }
                     else
                     {
-                        Console.WriteLine("Неверные данные");
-                        string response = $"Вы несете какую то чушь {remoteEP}";
-                        byte[] responseData = Encoding.UTF8.GetBytes(response);
-                        udpServer.Send(responseData, responseData.Length, remoteEP);
+                        bool RightData = serverUDP.CheckMessage(msgData);
+
+                        if (msgData[0] == "close")
+                        {
+                            Console.WriteLine("Закрываем подключение");
+                            serverUDP.CloseServer(udpServer);
+                            return;
+                        }
+
+                        if (RightData)
+                        {
+                            Console.WriteLine("Получено правильное сообщение от клиента: " + message);
+                            string response = $"Правильное сообщение получено на сервере: {message} от клиента: {remoteEP}";
+                            byte[] responseData = Encoding.UTF8.GetBytes(response);
+                            udpServer.Send(responseData, responseData.Length, remoteEP);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Неверные данные");
+                            string response = $"Вы несете какую то чушь {remoteEP}";
+                            byte[] responseData = Encoding.UTF8.GetBytes(response);
+                            udpServer.Send(responseData, responseData.Length, remoteEP);
+                        }
                     }
                 }
             }
@@ -66,9 +73,9 @@ namespace Tron
             udpServer.Close();
         }
 
-        bool CheckMessage(string[] msg) 
+        bool CheckMessage(string[] msg)
         {
-            bool HasDirection, HasCoordinates, HasLife = false;
+            bool HasState, HasDirection, HasCoordinates, HasLife = false;
             int x, y = 0;
 
             if (msg.Length >= 4)
