@@ -35,25 +35,23 @@ public class User : MonoBehaviour
         client = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         client.Connect(IPend);
 
-        byte[] message = Encoding.UTF8.GetBytes("Client");
+        byte[] message = Encoding.UTF8.GetBytes("connected");
         client.SendTo(message, IPend);
 
         isConnected = true;
 
-        Thread thread = new Thread(startGame);
+        Thread thread = new Thread(startSide);
         thread.Start();
     }
 
-    void startGame()
+    void startSide()
     {
         string start = "";
         while (true)
         {
-            if (start == "start")
+            if (start != "" && (start.Split(' ')[0] == "left" || start.Split(' ')[0] == "right"))
             {
-                byte[] message = Encoding.UTF8.GetBytes("GameStarted");
-                client.SendTo(message, IPend);
-                isGameStarted = true;
+                WatingMenu.startSide = start;
                 break;
             }
             else
@@ -64,7 +62,7 @@ public class User : MonoBehaviour
         }
     }
 
-    public static string getData()
+    string getData()
     {
         string message;
         int res = client.Receive(data, 0, 1000, 0);
@@ -82,5 +80,24 @@ public class User : MonoBehaviour
     {
         byte[] message = Encoding.UTF8.GetBytes(messageToSend);
         client.SendTo(message, IPend);
+    }
+
+    void dataProcessing()
+    {
+        getedData = getData();
+        if (getedData.Split(' ')[0] == "ready")
+        {
+            WatingMenu.isEnemyReady = true;
+        }
+        else if (getedData.Split(' ')[0] == "start")
+        {
+            byte[] message = Encoding.UTF8.GetBytes("GameStarted");
+            client.SendTo(message, IPend);
+            isGameStarted = true;
+        }
+        else if (getedData.Split(' ')[0] == "w" || getedData.Split(' ')[0] == "s" || getedData.Split(' ')[0] == "d" || getedData.Split(' ')[0] == "a")
+        {
+            Enemy.allData = getedData;
+        }
     }
 }
