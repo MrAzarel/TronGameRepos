@@ -24,14 +24,14 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        isDead = false;
-        GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
-        spawnWall();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        gameStart();
+
         move();
 
         fitColliderBetween(wall, lastWallEnd, transform.position);
@@ -105,5 +105,16 @@ public class Player : MonoBehaviour
     string collectMessage()
     {
         return lastPressedButton + " " + transform.position + " true";
+    }
+
+    void gameStart()
+    {
+        if (WatingMenu.isGameStarted)
+        {
+            isDead = false;
+            GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
+            spawnWall();
+            WatingMenu.isGameStarted = false;
+        }
     }
 }

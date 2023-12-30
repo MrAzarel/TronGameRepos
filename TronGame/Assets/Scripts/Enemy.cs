@@ -16,14 +16,14 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        isDead = false;
-        GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
-        spawnWall();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        gameStart();
+
         getDirection();
 
         move();
@@ -93,5 +93,16 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject);
         Time.timeScale = 0.001f;
         Restart.currentName = name;
+    }
+
+    void gameStart()
+    {
+        if (WatingMenu.isGameStarted)
+        {
+            isDead = false;
+            GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
+            spawnWall();
+            WatingMenu.isGameStarted = false;
+        }
     }
 }

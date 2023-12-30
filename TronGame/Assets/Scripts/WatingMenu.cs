@@ -1,4 +1,4 @@
-using Microsoft.Unity.VisualStudio.Editor;
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +13,7 @@ public class WatingMenu : MonoBehaviour
     public Text ready;
     public Button readyButton;
     public static bool isEnemyReady = false;
-    public static string startSide = "right";
+    public static string startSide;
 
     public GameObject youText;
     public GameObject enemyText;
@@ -24,14 +24,16 @@ public class WatingMenu : MonoBehaviour
 
     bool isPlayerReady = false;
 
+    public static bool isGameStarted; 
+
     void Start()
     {
+        Time.timeScale = 0.001f;
         watingMenu.SetActive(true);
         ChooseSide(startSide);
         readyButton.interactable = true;
         enemyBackground.color = new Color(0.5f, 0.5f, 0.5f);
         playerBackground.color = new Color(0.5f, 0.5f, 0.5f);
-        Time.timeScale = 0.001f;
     }
 
     void Update()
@@ -82,6 +84,7 @@ public class WatingMenu : MonoBehaviour
         {
             watingMenu.SetActive(false);
             Time.timeScale = 1f;
+            isGameStarted = true;
         }
     }
 }
