@@ -85,11 +85,10 @@ public class WatingMenu : MonoBehaviour
 
     void StartGame()
     {
-        if ((User.isEnemyReady && isPlayerReady) || readyCount == 1)
+        if ((User.isEnemyReady && isPlayerReady) || readyCount == 1 || isGameStarted)
         {
             watingMenu.SetActive(false);
             Time.timeScale = 1f;
-            isGameStarted = true;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Tron
     {
         static void Main(string[] args)
         {
-            IPEndPoint IPend = new IPEndPoint(IPAddress.Parse("10.102.163.226"), 556);
+            IPEndPoint IPend = new IPEndPoint(IPAddress.Parse("10.102.160.170"), 556);
             Server.Host(IPend);
 
             //while (true)
