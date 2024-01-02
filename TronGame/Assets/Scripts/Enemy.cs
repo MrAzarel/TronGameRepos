@@ -15,6 +15,8 @@ public class Enemy : MonoBehaviour
 
     bool isStarted;
 
+    string lastPressedButton = "w";
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,26 +46,35 @@ public class Enemy : MonoBehaviour
        return allData.Split(' ')[0];
     }
 
+    //void move()
+    //{
+    //    if (direction == "w")
+    //    {
+    //        GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
+    //        spawnWall();
+    //    }
+    //    else if (direction == "s")
+    //    {
+    //        GetComponent<Rigidbody2D>().velocity = -Vector2.up * speed;
+    //        spawnWall();
+    //    }
+    //    else if (direction == "d")
+    //    {
+    //        GetComponent<Rigidbody2D>().velocity = Vector2.right * speed;
+    //        spawnWall();
+    //    }
+    //    else if (direction == "a")
+    //    {
+    //        GetComponent<Rigidbody2D>().velocity = -Vector2.right * speed;
+    //        spawnWall();
+    //    }
+    //}
+
     void move()
     {
-        if (direction == "w")
+        transform.position = new Vector3(float.Parse(allData.Split(' ')[1]), float.Parse(allData.Split(' ')[2]));
+        if (allData.Split(' ')[0] != lastPressedButton)
         {
-            GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
-            spawnWall();
-        }
-        else if (direction == "s")
-        {
-            GetComponent<Rigidbody2D>().velocity = -Vector2.up * speed;
-            spawnWall();
-        }
-        else if (direction == "d")
-        {
-            GetComponent<Rigidbody2D>().velocity = Vector2.right * speed;
-            spawnWall();
-        }
-        else if (direction == "a")
-        {
-            GetComponent<Rigidbody2D>().velocity = -Vector2.right * speed;
             spawnWall();
         }
     }
