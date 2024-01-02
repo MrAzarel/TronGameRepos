@@ -17,19 +17,9 @@ public class User : MonoBehaviour
     static EndPoint IPend;
     static byte[] data = new byte[256];
     string getedData;
-    public static bool isEnemyReady = false;
 
-    bool isStartOver = false;
-    private void Update()
-    {
-
-        dataProcessing();
-
-        if (WatingMenu.isGameStarted)
-        {
-            sendData();
-        }
-    }
+    Thread dataGetThread;
+    Thread dataSendThread;
 
     public void Connect(string ip)
     {
@@ -43,19 +33,21 @@ public class User : MonoBehaviour
         MainMenu.isConnected = true;
 
         Thread thread = new Thread(startSide);
+
         thread.Start();
     }
 
     void startSide()
     {
+        dataGetThread = new Thread(dataProcessing);
         string start = "";
         while (true)
         {
             if (start != "" && (start.Split(' ')[0] == "left" || start.Split(' ')[0] == "right"))
             {
                 WatingMenu.startSide = start;
-                isStartOver = true;
-                break;
+                dataGetThread.Start();
+                break; 
             }
             else
             {
@@ -75,6 +67,7 @@ public class User : MonoBehaviour
 
     void sendData()
     {
+        //if (WatingMenu.isGameStarted) { }
         byte[] message = Encoding.UTF8.GetBytes(WatingMenu.dataToSend);
         client.SendTo(message, message.Length, SocketFlags.None, IPend);
     }
@@ -87,19 +80,24 @@ public class User : MonoBehaviour
 
     void dataProcessing()
     {
-        getedData = getData();
-        if (getedData.Split(' ')[0] == "ready")
+        dataSendThread = new Thread(sendData);
+        while (true)
         {
-            isEnemyReady = true;
-            WatingMenu.readyCount++;
-        }
-        else if (getedData.Split(' ')[0] == "start")
-        {
-            WatingMenu.isGameStarted = true;
-        }
-        else if (getedData.Split(' ')[0] == "w" || getedData.Split(' ')[0] == "s" || getedData.Split(' ')[0] == "d" || getedData.Split(' ')[0] == "a")
-        {
-            Enemy.allData = getedData;
+            getedData = getData();
+            if (getedData.Split(' ')[0] == "ready")
+            {
+                WatingMenu.isEnemyReady = true;
+                WatingMenu.readyCount++;
+            }
+            else if (getedData.Split(' ')[0] == "start")
+            {
+                WatingMenu.isGameStarted = true;
+                dataSendThread.Start();
+            }
+            else if (getedData.Split(' ')[0] == "w" || getedData.Split(' ')[0] == "s" || getedData.Split(' ')[0] == "d" || getedData.Split(' ')[0] == "a")
+            {
+                Enemy.allData = getedData;
+            }
         }
     }
 }

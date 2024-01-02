@@ -21,10 +21,12 @@ public class Player : MonoBehaviour
 
     string lastPressedButton = "w";
 
+    bool isStarted;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        isStarted = false;
     }
 
     // Update is called once per frame
@@ -32,7 +34,10 @@ public class Player : MonoBehaviour
     {
         if (WatingMenu.isGameStarted)
         {
-            gameStart();
+            if (!isStarted)
+            {
+                gameStart();
+            }
 
             move();
 
@@ -112,12 +117,10 @@ public class Player : MonoBehaviour
 
     void gameStart()
     {
-        if (WatingMenu.isGameStarted)
-        {
-            isDead = false;
-            GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
-            spawnWall();
-            WatingMenu.isGameStarted = false;
-        }
+        isDead = false;
+        GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
+        spawnWall();
+        isStarted = true;
+
     }
 }

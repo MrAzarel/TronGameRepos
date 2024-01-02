@@ -13,10 +13,12 @@ public class Enemy : MonoBehaviour
     Collider2D wall;
     public static bool isDead;
 
+    bool isStarted;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        isStarted = false;
     }
 
     // Update is called once per frame
@@ -24,7 +26,10 @@ public class Enemy : MonoBehaviour
     {
         if (WatingMenu.isGameStarted)
         {
-            gameStart();
+            if (!isStarted)
+            {
+                gameStart();
+            }
 
             getDirection();
 
@@ -100,12 +105,9 @@ public class Enemy : MonoBehaviour
 
     void gameStart()
     {
-        if (WatingMenu.isGameStarted)
-        {
-            isDead = false;
-            GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
-            spawnWall();
-            WatingMenu.isGameStarted = false;
-        }
+        isDead = false;
+        GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
+        spawnWall();
+        isStarted = true;
     }
 }

@@ -23,6 +23,7 @@ public class WatingMenu : MonoBehaviour
     public GameObject enemy;
 
     bool isPlayerReady = false;
+    public static bool isEnemyReady = false;
 
     public static bool isGameStarted = false;
     public static string dataToSend;
@@ -72,7 +73,7 @@ public class WatingMenu : MonoBehaviour
 
     void MakeEnemyReady()
     {
-        if (User.isEnemyReady || readyCount >= 1) 
+        if (isEnemyReady || readyCount >= 1) 
         {
             if (startSide == "right")
                 playerBackground.color = new Color(1, 1, 1);
@@ -85,10 +86,11 @@ public class WatingMenu : MonoBehaviour
 
     void StartGame()
     {
-        if ((User.isEnemyReady && isPlayerReady) || readyCount == 1 || isGameStarted)
+        if (isPlayerReady && isEnemyReady)
         {
             watingMenu.SetActive(false);
             Time.timeScale = 1f;
+            isGameStarted = true;
         }
     }
 }
