@@ -44,7 +44,7 @@ namespace Tron
         bool CheckMessage(string[] msg)
         {
             bool HasState, HasDirection, HasCoordinates, HasLife = false;
-            int x, y = 0;
+            float x, y = 0;
 
             if (msg.Length >= 4)
             {
@@ -56,7 +56,7 @@ namespace Tron
                 {
                     HasDirection = false;
                 }
-                if (int.TryParse(msg[1], out x) && int.TryParse(msg[2], out y))
+                if (float.TryParse(msg[1], out x) && float.TryParse(msg[2], out y))
                 {
                     HasCoordinates = true;
                 }

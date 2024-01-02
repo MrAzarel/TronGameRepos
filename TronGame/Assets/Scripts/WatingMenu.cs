@@ -73,7 +73,7 @@ public class WatingMenu : MonoBehaviour
 
     void MakeEnemyReady()
     {
-        if (isEnemyReady || readyCount >= 1) 
+        if (isEnemyReady) 
         {
             if (startSide == "right")
                 playerBackground.color = new Color(1, 1, 1);
@@ -88,7 +88,7 @@ public class WatingMenu : MonoBehaviour
     {
         if (isPlayerReady && isEnemyReady)
         {
-            watingMenu.SetActive(false);
+            watingMenu.SetActive(false);          
             Time.timeScale = 1f;
             isGameStarted = true;
         }

@@ -40,6 +40,7 @@ public class User : MonoBehaviour
     void startSide()
     {
         dataGetThread = new Thread(dataProcessing);
+        dataSendThread = new Thread(sendData);
         string start = "";
         while (true)
         {
@@ -47,6 +48,7 @@ public class User : MonoBehaviour
             {
                 WatingMenu.startSide = start;
                 dataGetThread.Start();
+                dataSendThread.Start();
                 break; 
             }
             else
@@ -67,9 +69,14 @@ public class User : MonoBehaviour
 
     void sendData()
     {
-        //if (WatingMenu.isGameStarted) { }
-        byte[] message = Encoding.UTF8.GetBytes(WatingMenu.dataToSend);
-        client.SendTo(message, message.Length, SocketFlags.None, IPend);
+        while (true)
+        {
+            if (WatingMenu.isGameStarted)
+            {
+                byte[] message = Encoding.UTF8.GetBytes(WatingMenu.dataToSend);
+                client.SendTo(message, message.Length, SocketFlags.None, IPend);
+            }
+        }
     }
 
     public static void sendMessage(string messageToSend)
@@ -80,7 +87,6 @@ public class User : MonoBehaviour
 
     void dataProcessing()
     {
-        dataSendThread = new Thread(sendData);
         while (true)
         {
             getedData = getData();
@@ -92,7 +98,6 @@ public class User : MonoBehaviour
             else if (getedData.Split(' ')[0] == "start")
             {
                 WatingMenu.isGameStarted = true;
-                dataSendThread.Start();
             }
             else if (getedData.Split(' ')[0] == "w" || getedData.Split(' ')[0] == "s" || getedData.Split(' ')[0] == "d" || getedData.Split(' ')[0] == "a")
             {

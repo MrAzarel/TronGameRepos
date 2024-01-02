@@ -23,6 +23,9 @@ public class Player : MonoBehaviour
 
     bool isStarted;
 
+    string x;
+    string y;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,7 +46,7 @@ public class Player : MonoBehaviour
 
             fitColliderBetween(wall, lastWallEnd, transform.position);
 
-            WatingMenu.dataToSend = collectMessage();
+            User.sendMessage(collectMessage());
         }
     }
 
@@ -112,7 +115,9 @@ public class Player : MonoBehaviour
 
     string collectMessage()
     {
-        return lastPressedButton + " " + transform.position + " true";
+        x =  transform.position.x.ToString();
+        y = transform.position.y.ToString();
+        return lastPressedButton + " " + x + " " + y + " true";
     }
 
     void gameStart()
@@ -121,6 +126,5 @@ public class Player : MonoBehaviour
         GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
         spawnWall();
         isStarted = true;
-
     }
 }
