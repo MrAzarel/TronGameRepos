@@ -31,7 +31,7 @@ public class Enemy : MonoBehaviour
                 gameStart();
             }
 
-            getDirection(direction);
+            direction = getDirection();
 
             move();
 
@@ -39,9 +39,9 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void getDirection(string dir)
+    string getDirection()
     {
-       dir = allData.Split(' ')[0];
+       return allData.Split(' ')[0];
     }
 
     void move()
