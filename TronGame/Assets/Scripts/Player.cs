@@ -108,6 +108,7 @@ public class Player : MonoBehaviour
 
     void endGame()
     {
+        User.sendMessage("dead");
         Destroy(gameObject);
         Time.timeScale = 0.001f;
         Restart.currentName = name;

@@ -105,6 +105,7 @@ public class User : MonoBehaviour
             }
             else if (getedData.Split(' ')[0] == "win")
             {
+                Debug.Log("win");
                 Restart.isWin = true;
             }
         }
