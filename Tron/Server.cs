@@ -136,12 +136,22 @@ namespace Tron
                                 how_many_ready++;
                             }
                         }
-                        //else if (how_many_ready == 2)
-                        //{
-                        //    byte[] responseData = Encoding.UTF8.GetBytes("start");
-                        //    ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client1Endpoint);
-                        //    ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client2Endpoint);
-                        //}
+                        else if (msgData[0] == "dead")
+                        {
+                            if (remoteEP.Equals(client1Endpoint))
+                            {
+                                Console.WriteLine($"{client1Endpoint} - client is dead");
+                                byte[] responseData = Encoding.UTF8.GetBytes("win");
+                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client2Endpoint);
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{client2Endpoint} - client is dead");
+                                byte[] responseData = Encoding.UTF8.GetBytes("win");
+                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client1Endpoint);
+                            }
+
+                        }
                         else
                         {
                             bool RightData = serverMethods.CheckMessage(msgData);

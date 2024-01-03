@@ -10,6 +10,7 @@ public class Restart : MonoBehaviour
     public Text winerName; 
     public static string currentName;
     bool menuIsOpend;
+    public static bool isWin = false;
 
     // Start is called before the first frame update
     void Start()
@@ -21,7 +22,7 @@ public class Restart : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Player.isDead && !menuIsOpend)
+        if ((Player.isDead || isWin) && !menuIsOpend)
         {
             winer();
             menuIsOpend = true;
@@ -30,7 +31,16 @@ public class Restart : MonoBehaviour
 
     void winer()
     {
-        winerName.text = currentName + " Lose";
+        if (isWin)
+        {
+            winerName.text = "You WIN";
+            winerName.color = new Color(0, 1, 0);
+        }
+        else
+        {
+            winerName.text = "You LOSE";
+            winerName.color = new Color(1, 0, 0);
+        }
         menu.SetActive(true);
     }
 

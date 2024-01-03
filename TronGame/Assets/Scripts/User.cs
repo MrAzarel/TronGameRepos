@@ -46,7 +46,7 @@ public class User : MonoBehaviour
         {
             if (start != "" && (start.Split(' ')[0] == "left" || start.Split(' ')[0] == "right"))
             {
-                WatingMenu.startSide = start;
+                WaitingMenu.startSide = start;
                 dataGetThread.Start();
                 dataSendThread.Start();
                 break; 
@@ -71,9 +71,9 @@ public class User : MonoBehaviour
     {
         while (true)
         {
-            if (WatingMenu.isGameStarted)
+            if (WaitingMenu.isGameStarted)
             {
-                byte[] message = Encoding.UTF8.GetBytes(WatingMenu.dataToSend);
+                byte[] message = Encoding.UTF8.GetBytes(WaitingMenu.dataToSend);
                 client.SendTo(message, message.Length, SocketFlags.None, IPend);
             }
         }
@@ -92,16 +92,20 @@ public class User : MonoBehaviour
             getedData = getData();
             if (getedData.Split(' ')[0] == "ready")
             {
-                WatingMenu.isEnemyReady = true;
-                WatingMenu.readyCount++;
+                WaitingMenu.isEnemyReady = true;
+                WaitingMenu.readyCount++;
             }
             else if (getedData.Split(' ')[0] == "start")
             {
-                WatingMenu.isGameStarted = true;
+                WaitingMenu.isGameStarted = true;
             }
             else if (getedData.Split(' ')[0] == "w" || getedData.Split(' ')[0] == "s" || getedData.Split(' ')[0] == "d" || getedData.Split(' ')[0] == "a")
             {
                 Enemy.allData = getedData;
+            }
+            else if (getedData.Split(' ')[0] == "win")
+            {
+                Restart.isWin = true;
             }
         }
     }

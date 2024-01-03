@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Threading;
 
-public class WatingMenu : MonoBehaviour
+public class WaitingMenu : MonoBehaviour
 {
     public GameObject watingMenu;
 

@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (WatingMenu.isGameStarted)
+        if (WaitingMenu.isGameStarted)
         {
             if (!isStarted)
             {

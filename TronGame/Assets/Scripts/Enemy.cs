@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (WatingMenu.isGameStarted)
+        if (WaitingMenu.isGameStarted)
         {
             if (!isStarted)
             {
@@ -45,30 +45,6 @@ public class Enemy : MonoBehaviour
     {
        return allData.Split(' ')[0];
     }
-
-    //void move()
-    //{
-    //    if (direction == "w")
-    //    {
-    //        GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
-    //        spawnWall();
-    //    }
-    //    else if (direction == "s")
-    //    {
-    //        GetComponent<Rigidbody2D>().velocity = -Vector2.up * speed;
-    //        spawnWall();
-    //    }
-    //    else if (direction == "d")
-    //    {
-    //        GetComponent<Rigidbody2D>().velocity = Vector2.right * speed;
-    //        spawnWall();
-    //    }
-    //    else if (direction == "a")
-    //    {
-    //        GetComponent<Rigidbody2D>().velocity = -Vector2.right * speed;
-    //        spawnWall();
-    //    }
-    //}
 
     void move()
     {
