@@ -968,8 +968,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: WatingMenu, Assembly-CSharp
+      - m_Target: {fileID: 1605025754}
+        m_TargetAssemblyTypeName: WaitingMenu, Assembly-CSharp
         m_MethodName: RedyBtn
         m_Mode: 1
         m_Arguments:
@@ -1754,7 +1754,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   watingMenu: {fileID: 1933175678}
-  menu: {fileID: 2133045899}
   enemyBackground: {fileID: 18944175}
   playerBackground: {fileID: 621474070}
   ready: {fileID: 420415658}
