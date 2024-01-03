@@ -31,6 +31,7 @@ public class Restart : MonoBehaviour
 
     void winer()
     {
+        Time.timeScale = 0.001f;
         if (isWin)
         {
             winerName.text = "You WIN";
