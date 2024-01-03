@@ -50,4 +50,9 @@ public class Restart : MonoBehaviour
         WaitingMenu.isEnemyReady = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
+    public void mainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
 }
