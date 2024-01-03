@@ -76,6 +76,7 @@ public class Enemy : MonoBehaviour
         if (allData.Split(' ')[0] != lastPressedButton)
         {
             spawnWall();
+            lastPressedButton = allData.Split(' ')[0];
         }
     }
 
