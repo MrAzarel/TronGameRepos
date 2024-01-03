@@ -47,7 +47,7 @@ public class Restart : MonoBehaviour
 
     public void restartBtn()
     {
+        WaitingMenu.isEnemyReady = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        Time.timeScale = 1f;
     }
 }
