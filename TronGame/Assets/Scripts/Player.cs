@@ -109,6 +109,7 @@ public class Player : MonoBehaviour
 
     void endGame()
     {
+        WaitingMenu.isGameStarted = false;
         User.sendMessage("dead");
         Destroy(gameObject);
         Restart.currentName = name;
