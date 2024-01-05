@@ -226,8 +226,10 @@ namespace Tron
 
         void Results(string nameOfWinner)
         {
-            string path = "C:\\Users\\artem\\Desktop\\records.txt";
-            using (FileStream fstream = new FileStream(path, FileMode.OpenOrCreate))
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string path = desktop + "/" + "records.txt";
+            nameOfWinner = nameOfWinner +"\n";
+            using (FileStream fstream = new FileStream(path, FileMode.Append))
             {
                 byte[] buffer = Encoding.Default.GetBytes(nameOfWinner);
                 fstream.Write(buffer, 0, buffer.Length);
