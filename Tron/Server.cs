@@ -1,6 +1,7 @@
 ﻿    using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -8,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Tron
 {
@@ -127,13 +129,17 @@ namespace Tron
                         {
                             Console.WriteLine("Received ready");
                             
-                            if (remoteEP.Equals(client1Endpoint) && serverMethods.how_many_connected == 2)
+                            if (remoteEP.Equals(client1Endpoint))
                             {
                                 Console.WriteLine($"{client1Endpoint} - client is ready");
-                                Console.WriteLine($"{client2Endpoint} - client is ready");
                                 byte[] responseData = Encoding.UTF8.GetBytes("ready");
                                 ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client2Endpoint);
-                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client1Endpoint);
+                            }
+                            else
+                            {
+                                 Console.WriteLine($"{client2Endpoint} - client is ready");
+                                 byte[] responseData = Encoding.UTF8.GetBytes("ready");
+                                 ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client1Endpoint);
                             }
                         }
                         else if (msgData[0] == "dead")
@@ -143,12 +149,14 @@ namespace Tron
                                 Console.WriteLine($"{client1Endpoint} - client is dead");
                                 byte[] responseData = Encoding.UTF8.GetBytes("win");
                                 ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client2Endpoint);
+                                serverMethods.Results("left won");
                             }
                             else
                             {
                                 Console.WriteLine($"{client2Endpoint} - client is dead");
                                 byte[] responseData = Encoding.UTF8.GetBytes("win");
                                 ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client1Endpoint);
+                                serverMethods.Results("right won");
                             }
 
                         }
@@ -168,7 +176,6 @@ namespace Tron
                                 {
                                     Console.WriteLine("tick");
                                     byte[] responseData = Encoding.UTF8.GetBytes(response);
-                                    ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client2Endpoint);
                                 }
                                 else
                                 {
@@ -214,6 +221,20 @@ namespace Tron
             {
             }
             return false;
+        }
+
+        void Results(string nameOfWinner)
+        {
+            string Path = Convert.ToString(Environment.SpecialFolder.MyDocuments);
+            Path = Path + "\records.txt";
+            using (FileStream fstream = new FileStream(Path, FileMode.OpenOrCreate))
+            {
+                // преобразуем строку в байты
+                byte[] buffer = Encoding.Default.GetBytes(nameOfWinner);
+                // запись массива байтов в файл
+                fstream.Write(buffer, 0, buffer.Length);
+                Console.WriteLine("Текст записан в файл");
+            }
         }
         
     }
