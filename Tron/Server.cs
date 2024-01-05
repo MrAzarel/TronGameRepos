@@ -176,6 +176,7 @@ namespace Tron
                                 {
                                     Console.WriteLine("tick");
                                     byte[] responseData = Encoding.UTF8.GetBytes(response);
+                                    ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client2Endpoint);
                                 }
                                 else
                                 {
