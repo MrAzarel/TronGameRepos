@@ -17,6 +17,7 @@ public class MainMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        isConnected = false;
         menuButtons.SetActive(true);
         enter.SetActive(false);
     }

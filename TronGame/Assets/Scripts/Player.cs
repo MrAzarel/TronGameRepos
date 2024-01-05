@@ -101,6 +101,7 @@ public class Player : MonoBehaviour
     {
         if (collider != wall)
         {
+            Time.timeScale = 0.001f;
             isDead = true;
             endGame();
         }
@@ -108,6 +109,7 @@ public class Player : MonoBehaviour
 
     void endGame()
     {
+        WaitingMenu.isGameStarted = false;
         User.sendMessage("dead");
         Destroy(gameObject);
         Restart.currentName = name;

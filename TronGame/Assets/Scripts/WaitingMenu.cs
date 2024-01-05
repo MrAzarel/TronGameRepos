@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Threading;
+using UnityEngine.SceneManagement;
 
 public class WaitingMenu : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class WaitingMenu : MonoBehaviour
     public GameObject player;
     public GameObject enemy;
 
-    bool isPlayerReady = false;
+    public static bool isPlayerReady = false;
     public static bool isEnemyReady = false;
 
     public static bool isGameStarted = false;
@@ -92,5 +93,10 @@ public class WaitingMenu : MonoBehaviour
             Time.timeScale = 1f;
             isGameStarted = true;
         }
+    }
+
+    public void backBtn()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 }
