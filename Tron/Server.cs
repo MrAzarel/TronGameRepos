@@ -214,7 +214,7 @@ namespace Tron
 
         bool CheckCoordinates(double X_before, double Y_before, double x, double y)
         {
-            if ((x - X_before <= 10) && (y - Y_before <= 10))
+            if ((x - X_before <= 15) && (y - Y_before <= 15))
             {
                 return true;
             }
@@ -230,9 +230,7 @@ namespace Tron
             Path = Path + "\records.txt";
             using (FileStream fstream = new FileStream(Path, FileMode.OpenOrCreate))
             {
-                // преобразуем строку в байты
                 byte[] buffer = Encoding.Default.GetBytes(nameOfWinner);
-                // запись массива байтов в файл
                 fstream.Write(buffer, 0, buffer.Length);
                 Console.WriteLine("Текст записан в файл");
             }
