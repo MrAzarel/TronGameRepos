@@ -23,7 +23,7 @@ public class WaitingMenu : MonoBehaviour
     public GameObject player;
     public GameObject enemy;
 
-    bool isPlayerReady = false;
+    public static bool isPlayerReady = false;
     public static bool isEnemyReady = false;
 
     public static bool isGameStarted = false;

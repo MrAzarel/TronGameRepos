@@ -48,11 +48,14 @@ public class Restart : MonoBehaviour
     public void restartBtn()
     {
         WaitingMenu.isEnemyReady = false;
+        WaitingMenu.isGameStarted = false;
+        WaitingMenu.isPlayerReady = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void mainMenu()
     {
+        User.sendMessage("disconnect");
         SceneManager.LoadScene("MainMenu");
     }
 }

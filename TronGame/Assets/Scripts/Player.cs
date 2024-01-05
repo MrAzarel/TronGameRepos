@@ -101,6 +101,7 @@ public class Player : MonoBehaviour
     {
         if (collider != wall)
         {
+            Time.timeScale = 0.001f;
             isDead = true;
             endGame();
         }
