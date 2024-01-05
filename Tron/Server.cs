@@ -220,8 +220,8 @@ namespace Tron
             }
             else
             {
+                return false;
             }
-            return false;
         }
 
         void Results(string nameOfWinner)
