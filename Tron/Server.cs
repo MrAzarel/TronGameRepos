@@ -214,7 +214,7 @@ namespace Tron
 
         bool CheckCoordinates(double X_before, double Y_before, double x, double y)
         {
-            if ((x - X_before <= 15) && (y - Y_before <= 15))
+            if ((x - X_before <= 25) && (y - Y_before <= 25))
             {
                 return true;
             }
@@ -227,7 +227,7 @@ namespace Tron
         void Results(string nameOfWinner)
         {
             string Path = Convert.ToString(Environment.SpecialFolder.MyDocuments);
-            Path = Path + "\records.txt";
+            Path = Path + "\\records.txt";
             using (FileStream fstream = new FileStream(Path, FileMode.OpenOrCreate))
             {
                 byte[] buffer = Encoding.Default.GetBytes(nameOfWinner);
