@@ -17,6 +17,8 @@ namespace Tron
         public static EndPoint client1Endpoint;
         public static EndPoint client2Endpoint;
         public static int how_many_ready;
+        public int how_many_connected = 0;
+
         public static void Host(IPEndPoint IPEnd)
         {
             Server serverMethods = new Server();
@@ -86,7 +88,9 @@ namespace Tron
         static void ListenForClient(object endpointObj , Server serverMethods, string client)
         {
             EndPoint remoteEP = (EndPoint)endpointObj;
-
+            double x_before = 0;
+            double y_before = 0;
+            
             try
             {
                 while (true)
@@ -106,6 +110,8 @@ namespace Tron
                         Console.WriteLine("Received connected");
                         byte[] responseData = Encoding.UTF8.GetBytes(client);
                         ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, remoteEP);
+                        serverMethods.how_many_connected = serverMethods.how_many_connected + 1;
+                        Console.WriteLine($"Connected: {serverMethods.how_many_connected}");
                         if(client == "left")
                         {
                             client1Endpoint = remoteEP;
@@ -121,19 +127,13 @@ namespace Tron
                         {
                             Console.WriteLine("Received ready");
                             
-                            if (remoteEP.Equals(client1Endpoint))
+                            if (remoteEP.Equals(client1Endpoint) && serverMethods.how_many_connected == 2)
                             {
                                 Console.WriteLine($"{client1Endpoint} - client is ready");
-                                byte[] responseData = Encoding.UTF8.GetBytes("ready");
-                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client2Endpoint);
-                                how_many_ready++;
-                            }
-                            else
-                            {
                                 Console.WriteLine($"{client2Endpoint} - client is ready");
                                 byte[] responseData = Encoding.UTF8.GetBytes("ready");
+                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client2Endpoint);
                                 ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, client1Endpoint);
-                                how_many_ready++;
                             }
                         }
                         else if (msgData[0] == "dead")
@@ -155,11 +155,15 @@ namespace Tron
                         else
                         {
                             bool RightData = serverMethods.CheckMessage(msgData);
+                            bool AdequateCoordinates = serverMethods.CheckCoordinates(x_before, y_before, Convert.ToDouble(msgData[1]), Convert.ToDouble(msgData[2]));
 
-                            if (RightData)
+                            if (RightData && AdequateCoordinates)
                             {
                                 Console.WriteLine("Получено правильное сообщение от клиента: " + message);
                                 string response = message;
+                                x_before = Convert.ToDouble(msgData[1]);
+                                y_before = Convert.ToDouble(msgData[2]);
+
                                 if (remoteEP.Equals(client1Endpoint))
                                 {
                                     Console.WriteLine("tick");
@@ -180,6 +184,12 @@ namespace Tron
                                 byte[] responseData = Encoding.UTF8.GetBytes(response);
                                 ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, remoteEP);
                             }
+                            if (!AdequateCoordinates)
+                            {
+                                string response = "cheat";
+                                byte[] responseData = Encoding.UTF8.GetBytes(response);
+                                ServerUDP.SendTo(responseData, responseData.Length, SocketFlags.None, remoteEP);
+                            }
                         }
                     }
                 }
@@ -193,11 +203,24 @@ namespace Tron
                ServerUDP.Close();
             }
         }
+
+        bool CheckCoordinates(double X_before, double Y_before, double x, double y)
+        {
+            if ((x - X_before <= 10) && (y - Y_before <= 10))
+            {
+                return true;
+            }
+            else
+            {
+            }
+            return false;
+        }
+        
     }
-
-
-
     
-
-
 }
+
+
+
+
+
